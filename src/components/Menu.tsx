@@ -1,3 +1,4 @@
+import { role } from "@/lib/data";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -122,16 +123,21 @@ const Menu = () => {
     <div className="mt-2 text-sm">
       {menuItems.map((i) => (
         <div className="flex flex-col gap-2" key={i.title}>
-          <span className="hidden lg:block text-white my-4 font-bold">{i.title}</span>
-            {i.items.map((item) => (
-              <Link className="flex items-center justify-center lg:justify-start gap-2 py-2 px-4 hover:bg-gray-200 text-gray-700"
-                href={item.href}
-                key={item.label}
-          >
-                <Image src={item.icon} alt={item.label} width={20} height={20} />
-                <span className="hidden lg:block">{item.label}</span>
-              </Link>
-            ))}
+          <span className="hidden lg:block text-white my-4 mx-2 font-bold">{i.title}</span>
+            {i.items.map((item) => {
+              if(item.visible.includes(role)) {
+                return (
+                  <Link
+                    key={item.label}
+                    href={item.href}
+                    className="flex items-center gap-2 p-2 rounded-sm hover:bg-gray-400 transition-colors md:px-2" 
+                  >
+                    <Image src={item.icon} alt={item.label} width={20} height={20} />
+                    <span className="hidden lg:block">{item.label}</span>
+                  </Link>
+                );
+              }
+            })}
           </div>
       ))}
     </div>
