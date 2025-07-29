@@ -10,7 +10,7 @@ export const teachersData = [
     email: "john@doe.com",
     photo:
       "https://images.pexels.com/photos/2888150/pexels-photo-2888150.jpeg?auto=compress&cs=tinysrgb&w=1200",
-    phone: "1234567890",
+    phoneNo: "1234567890",
     subjects: ["Math", "Geometry"],
     classes: ["1B", "2A", "3C"],
     address: "123 Main St, Anytown, USA",
@@ -22,7 +22,7 @@ export const teachersData = [
     email: "jane@doe.com",
     photo:
       "https://images.pexels.com/photos/936126/pexels-photo-936126.jpeg?auto=compress&cs=tinysrgb&w=1200",
-    phone: "1234567890",
+    phoneNo: "1234567890",
     subjects: ["Physics", "Chemistry"],
     classes: ["5A", "4B", "3C"],
     address: "123 Main St, Anytown, USA",
@@ -34,7 +34,7 @@ export const teachersData = [
     email: "mike@geller.com",
     photo:
       "https://images.pexels.com/photos/428328/pexels-photo-428328.jpeg?auto=compress&cs=tinysrgb&w=1200",
-    phone: "1234567890",
+    phoneNo: "1234567890",
     subjects: ["Biology"],
     classes: ["5A", "4B", "3C"],
     address: "123 Main St, Anytown, USA",
@@ -46,7 +46,7 @@ export const teachersData = [
     email: "jay@gmail.com",
     photo:
       "https://images.pexels.com/photos/1187765/pexels-photo-1187765.jpeg?auto=compress&cs=tinysrgb&w=1200",
-    phone: "1234567890",
+    phoneNo: "1234567890",
     subjects: ["History"],
     classes: ["5A", "4B", "3C"],
     address: "123 Main St, Anytown, USA",
@@ -58,7 +58,7 @@ export const teachersData = [
     email: "jane@gmail.com",
     photo:
       "https://images.pexels.com/photos/1102341/pexels-photo-1102341.jpeg?auto=compress&cs=tinysrgb&w=1200",
-    phone: "1234567890",
+    phoneNo: "1234567890",
     subjects: ["Music", "History"],
     classes: ["5A", "4B", "3C"],
     address: "123 Main St, Anytown, USA",
@@ -70,7 +70,7 @@ export const teachersData = [
     email: "anna@gmail.com",
     photo:
       "https://images.pexels.com/photos/712513/pexels-photo-712513.jpeg?auto=compress&cs=tinysrgb&w=1200",
-    phone: "1234567890",
+    phoneNo: "1234567890",
     subjects: ["Physics"],
     classes: ["5A", "4B", "3C"],
     address: "123 Main St, Anytown, USA",
@@ -82,7 +82,7 @@ export const teachersData = [
     email: "allen@black.com",
     photo:
       "https://images.pexels.com/photos/1438081/pexels-photo-1438081.jpeg?auto=compress&cs=tinysrgb&w=1200",
-    phone: "1234567890",
+    phoneNo: "1234567890",
     subjects: ["English", "Spanish"],
     classes: ["5A", "4B", "3C"],
     address: "123 Main St, Anytown, USA",
@@ -94,7 +94,7 @@ export const teachersData = [
     email: "ophelia@castro.com",
     photo:
       "https://images.pexels.com/photos/1036623/pexels-photo-1036623.jpeg?auto=compress&cs=tinysrgb&w=1200",
-    phone: "1234567890",
+    phoneNo: "1234567890",
     subjects: ["Math", "Geometry"],
     classes: ["5A", "4B", "3C"],
     address: "123 Main St, Anytown, USA",
@@ -106,7 +106,7 @@ export const teachersData = [
     email: "derek@briggs.com",
     photo:
       "https://images.pexels.com/photos/842980/pexels-photo-842980.jpeg?auto=compress&cs=tinysrgb&w=1200",
-    phone: "1234567890",
+    phoneNo: "1234567890",
     subjects: ["Literature", "English"],
     classes: ["5A", "4B", "3C"],
     address: "123 Main St, Anytown, USA",
@@ -118,7 +118,7 @@ export const teachersData = [
     email: "john@glover.com",
     photo:
       "https://images.pexels.com/photos/1043474/pexels-photo-1043474.jpeg?auto=compress&cs=tinysrgb&w=1200",
-    phone: "1234567890",
+    phoneNo: "1234567890",
     subjects: ["Biology"],
     classes: ["5A", "4B", "3C"],
     address: "123 Main St, Anytown, USA",
@@ -133,7 +133,7 @@ export const studentsData = [
     email: "john@doe.com",
     photo:
       "https://images.pexels.com/photos/2888150/pexels-photo-2888150.jpeg?auto=compress&cs=tinysrgb&w=1200",
-    phone: "1234567890",
+    phoneNo: "1234567890",
     grade: 5,
     class: "1B",
     address: "123 Main St, Anytown, USA",
@@ -145,7 +145,7 @@ export const studentsData = [
     email: "jane@doe.com",
     photo:
       "https://images.pexels.com/photos/936126/pexels-photo-936126.jpeg?auto=compress&cs=tinysrgb&w=1200",
-    phone: "1234567890",
+    phoneNo: "1234567890",
     grade: 5,
     class: "5A",
     address: "123 Main St, Anytown, USA",
@@ -157,7 +157,7 @@ export const studentsData = [
     email: "mike@geller.com",
     photo:
       "https://images.pexels.com/photos/428328/pexels-photo-428328.jpeg?auto=compress&cs=tinysrgb&w=1200",
-    phone: "1234567890",
+    phoneNo: "1234567890",
     grade: 5,
     class: "5A",
     address: "123 Main St, Anytown, USA",
@@ -169,7 +169,7 @@ export const studentsData = [
     email: "jay@gmail.com",
     photo:
       "https://images.pexels.com/photos/1187765/pexels-photo-1187765.jpeg?auto=compress&cs=tinysrgb&w=1200",
-    phone: "1234567890",
+    phoneNo: "1234567890",
     grade: 5,
     class: "5A",
     address: "123 Main St, Anytown, USA",
@@ -181,7 +181,7 @@ export const studentsData = [
     email: "jane@gmail.com",
     photo:
       "https://images.pexels.com/photos/1102341/pexels-photo-1102341.jpeg?auto=compress&cs=tinysrgb&w=1200",
-    phone: "1234567890",
+    phoneNo: "1234567890",
     grade: 5,
     class: "5A",
     address: "123 Main St, Anytown, USA",
@@ -193,7 +193,7 @@ export const studentsData = [
     email: "anna@gmail.com",
     photo:
       "https://images.pexels.com/photos/712513/pexels-photo-712513.jpeg?auto=compress&cs=tinysrgb&w=1200",
-    phone: "1234567890",
+    phoneNo: "1234567890",
     grade: 5,
     class: "5A",
     address: "123 Main St, Anytown, USA",
@@ -205,7 +205,7 @@ export const studentsData = [
     email: "allen@black.com",
     photo:
       "https://images.pexels.com/photos/1438081/pexels-photo-1438081.jpeg?auto=compress&cs=tinysrgb&w=1200",
-    phone: "1234567890",
+    phoneNo: "1234567890",
     grade: 5,
     class: "5A",
     address: "123 Main St, Anytown, USA",
@@ -217,7 +217,7 @@ export const studentsData = [
     email: "ophelia@castro.com",
     photo:
       "https://images.pexels.com/photos/1036623/pexels-photo-1036623.jpeg?auto=compress&cs=tinysrgb&w=1200",
-    phone: "1234567890",
+    phoneNo: "1234567890",
     grade: 5,
     class: "5A",
     address: "123 Main St, Anytown, USA",
@@ -229,7 +229,7 @@ export const studentsData = [
     email: "derek@briggs.com",
     photo:
       "https://images.pexels.com/photos/842980/pexels-photo-842980.jpeg?auto=compress&cs=tinysrgb&w=1200",
-    phone: "1234567890",
+    phoneNo: "1234567890",
     grade: 5,
     class: "5A",
     address: "123 Main St, Anytown, USA",
@@ -241,7 +241,7 @@ export const studentsData = [
     email: "john@glover.com",
     photo:
       "https://images.pexels.com/photos/1043474/pexels-photo-1043474.jpeg?auto=compress&cs=tinysrgb&w=1200",
-    phone: "1234567890",
+    phoneNo: "1234567890",
     grade: 5,
     class: "5A",
     address: "123 Main St, Anytown, USA",
@@ -254,7 +254,7 @@ export const parentsData = [
     name: "John Doe",
     students: ["Sarah Brewer"],
     email: "john@doe.com",
-    phone: "1234567890",
+    phoneNo: "1234567890",
     address: "123 Main St, Anytown, USA",
   },
   {
@@ -262,7 +262,7 @@ export const parentsData = [
     name: "Jane Doe",
     students: ["Cecilia Bradley"],
     email: "jane@doe.com",
-    phone: "1234567890",
+    phoneNo: "1234567890",
     address: "123 Main St, Anytown, USA",
   },
   {
@@ -270,7 +270,7 @@ export const parentsData = [
     name: "Mike Geller",
     students: ["Fanny Caldwell"],
     email: "mike@geller.com",
-    phone: "1234567890",
+    phoneNo: "1234567890",
     address: "123 Main St, Anytown, USA",
   },
   {
@@ -278,7 +278,7 @@ export const parentsData = [
     name: "Jay French",
     students: ["Mollie Fitzgerald", "Ian Bryant"],
     email: "mike@geller.com",
-    phone: "1234567890",
+    phoneNo: "1234567890",
     address: "123 Main St, Anytown, USA",
   },
   {
@@ -286,7 +286,7 @@ export const parentsData = [
     name: "Jane Smith",
     students: ["Mable Harvey"],
     email: "mike@geller.com",
-    phone: "1234567890",
+    phoneNo: "1234567890",
     address: "123 Main St, Anytown, USA",
   },
   {
@@ -294,7 +294,7 @@ export const parentsData = [
     name: "Anna Santiago",
     students: ["Joel Lambert"],
     email: "mike@geller.com",
-    phone: "1234567890",
+    phoneNo: "1234567890",
     address: "123 Main St, Anytown, USA",
   },
   {
@@ -302,7 +302,7 @@ export const parentsData = [
     name: "Allen Black",
     students: ["Carrie Tucker", "Lilly Underwood"],
     email: "mike@geller.com",
-    phone: "1234567890",
+    phoneNo: "1234567890",
     address: "123 Main St, Anytown, USA",
   },
   {
@@ -310,7 +310,7 @@ export const parentsData = [
     name: "Ophelia Castro",
     students: ["Alexander Blair"],
     email: "mike@geller.com",
-    phone: "1234567890",
+    phoneNo: "1234567890",
     address: "123 Main St, Anytown, USA",
   },
   {
@@ -318,7 +318,7 @@ export const parentsData = [
     name: "Derek Briggs",
     students: ["Susan Webster", "Maude Stone"],
     email: "mike@geller.com",
-    phone: "1234567890",
+    phoneNo: "1234567890",
     address: "123 Main St, Anytown, USA",
   },
   {
@@ -326,7 +326,7 @@ export const parentsData = [
     name: "John Glover",
     students: ["Stella Scott"],
     email: "mike@geller.com",
-    phone: "1234567890",
+    phoneNo: "1234567890",
     address: "123 Main St, Anytown, USA",
   },
 ];
