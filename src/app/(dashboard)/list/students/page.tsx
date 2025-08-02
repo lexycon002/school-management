@@ -43,7 +43,7 @@ const StudentListPage = () => {
                 <div className="flex items-center gap-2">
                     <Link href={`/list/teachers/${item.id}`} className="">
                     <button className="w-8 h-8 flex items-center justify-center rounded-full bg-myBrown">
-                        <Image src="/view.png" alt="" width={14} height={14} />
+                        <Image src="/edit.png" alt="" width={14} height={14} />
                     </button>
                     </Link>
                 {role === "admin" && (<button className="w-8 h-8 flex items-center justify-center rounded-full bg-primary">
