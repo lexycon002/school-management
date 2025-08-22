@@ -1,42 +1,72 @@
-const Announcements = () => {
-  return (
-    <div className='bg-white p-4 rounded-md'>
-        <div className="flex items-center justify-between">
-            <h1 className="font-semibold text-xl">Announcements</h1>
-            <span className="text-blue-500">View all</span>
-        </div>
-        <div className="flex flex-col gap-4 mt-4">
-            <div className="bg-primary p-2 rounded-md p-4">
-                <div className="flex items-center justify-between">
-                    <h1 className="text-white font-semibold">New School Year</h1>
-                    <span className="text-white bg-myBrown text-sm rounded-md px-1 py-1">2 days ago</span>
-                </div>
-                <p className="text-sm text-white mt-2">The new school year will start on September 1st, 2023. Please make sure to complete your registration before the deadline.</p>
-            </div>
-            <div className="bg-myBrown p-2 rounded-md p-4">
-                <div className="flex items-center justify-between">
-                    <h1 className="text-white font-semibold">Speech from the Vice- Chancellor</h1>
-                    <span className="text-white bg-primary text-sm rounded-md px-1 py-1">22 minutes ago</span>
-                </div>
-                <p className="text-sm text-white mt-2">The vice-chancellor speaks about the indescent dressing among students, vowing that any student caught dressng inappropriately willl face consequence</p>
-            </div>
-            <div className="bg-primary p-2 rounded-md p-4">
-                <div className="flex items-center justify-between">
-                    <h1 className="text-white font-semibold">Graduating in Styles</h1>
-                    <span className="text-white bg-myBrown text-sm rounded-md px-1 py-1">10 minutes ago</span>
-                </div>
-                <p className="text-sm text-white mt-2">FUOYE Students graduating in styles after one year of strike</p>
-            </div>
-            <div className="bg-myBrown p-2 rounded-md p-4">
-                <div className="flex items-center justify-between">
-                    <h1 className="text-white font-semibold">Exam time table for freshers</h1>
-                    <span className="text-white bg-primary text-sm rounded-md px-1 py-1">20 seconds ago</span>
-                </div>
-                <p className="text-sm text-white mt-2">The school has announced when the exam will take place advising students to check the official website for more details.</p>
-            </div>
-        </div>
-    </div>
-  )
-}
+import prisma from "@/lib/prisma";
+import { auth } from "@clerk/nextjs/server";
 
-export default Announcements
+const Announcements = async () => {
+  const { userId, sessionClaims } = await auth();
+  const role = (sessionClaims?.metadata as { role?: string })?.role;
+
+  const roleConditions = {
+    teacher: { lessons: { some: { teacherId: userId! } } },
+    student: { students: { some: { id: userId! } } },
+    parent: { students: { some: { parentId: userId! } } },
+  };
+
+  const data = await prisma.announcement.findMany({
+    take: 3,
+    orderBy: { date: "desc" },
+    where: {
+      ...(role !== "admin" && {
+        OR: [
+          { classId: null },
+          { class: roleConditions[role as keyof typeof roleConditions] || {} },
+        ],
+      }),
+    },
+  });
+
+  return (
+    <div className="bg-white p-4 rounded-md">
+      <div className="flex items-center justify-between">
+        <h1 className="text-xl font-semibold">Announcements</h1>
+        <span className="text-xs text-gray-400">View All</span>
+      </div>
+      <div className="flex flex-col gap-4 mt-4">
+        {data[0] && (
+          <div className="bg-primary rounded-md p-4">
+            <div className="flex items-center justify-between">
+              <h2 className="font-medium">{data[0].title}</h2>
+              <span className="text-xs text-gray-400 bg-white rounded-md px-1 py-1">
+                {new Intl.DateTimeFormat("en-GB").format(data[0].date)}
+              </span>
+            </div>
+            <p className="text-sm text-gray-400 mt-1">{data[0].description}</p>
+          </div>
+        )}
+        {data[1] && (
+          <div className="bg-myBrown rounded-md p-4">
+            <div className="flex items-center justify-between">
+              <h2 className="font-medium">{data[1].title}</h2>
+              <span className="text-xs text-gray-400 bg-white rounded-md px-1 py-1">
+                {new Intl.DateTimeFormat("en-GB").format(data[1].date)}
+              </span>
+            </div>
+            <p className="text-sm text-gray-400 mt-1">{data[1].description}</p>
+          </div>
+        )}
+        {data[2] && (
+          <div className="bg-secondary rounded-md p-4">
+            <div className="flex items-center justify-between">
+              <h2 className="font-medium">{data[2].title}</h2>
+              <span className="text-xs text-gray-400 bg-white rounded-md px-1 py-1">
+                {new Intl.DateTimeFormat("en-GB").format(data[2].date)}
+              </span>
+            </div>
+            <p className="text-sm text-gray-400 mt-1">{data[2].description}</p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default Announcements;

@@ -3,36 +3,12 @@
 import Image from 'next/image';
 import { BarChart, Bar, Rectangle, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
-const data = [
-  {
-    name: 'Mon',
-    present: 100,
-    absent: 50,
-  },
-  {
-    name: 'Tue',
-    present: 80,
-    absent: 40,
-  },
-  {
-    name: 'Wed',
-    present: 75,
-    absent: 35,
-  },
-  {
-    name: 'Thur',
-    present: 60,
-    absent: 30,
-  },
-  {
-    name: 'Fri',
-    present: 50,
-    absent: 25,
-  },
-];
 
-
-const AttendanceChart = () => {
+const AttendanceChart = ({
+  data,
+}: {
+  data: { name: string; present: number; absent: number }[];
+}) => {
   return (
     <div className='bg-white rounded-xl p-4 h-full'>
         <div className="flex justify-between items-center">
