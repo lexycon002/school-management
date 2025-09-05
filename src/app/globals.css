@@ -1,4 +1,4 @@
-/* @tailwind base;
+@tailwind base;
 @tailwind components;
 @tailwind utilities;
 
@@ -97,9 +97,9 @@
 .rbc-event-label{
   color: gray !important;
   margin-bottom: 5px;
-} */
+}
 
- @tailwind base;
+ /* @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
@@ -206,4 +206,4 @@
 .rbc-event-label{
   color: gray !important;
   margin-bottom: 5px;
-}
+} */
