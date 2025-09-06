@@ -11,13 +11,12 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
-interface SingleStudentPageProps {
-  params: {
-    id: string;
-  };
+interface PageProps {
+  params: { id: string };
+  searchParams?: { [key: string]: string | string[] | undefined };
 }
 
-const SingleStudentPage = async ({ params }: SingleStudentPageProps) => {
+const SingleStudentPage = async ({ params }: PageProps) => {
   const { id } = params;
 
   const { sessionClaims } = await auth();
