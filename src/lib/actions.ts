@@ -1,17 +1,30 @@
 "use server";
 
-import {
-  ClassSchema,
-  ExamSchema,
-  StudentSchema,
-  SubjectSchema,
-  TeacherSchema,
-} from "./formValidationSchemas";
 import prisma from "./prisma";
-import { clerkClient } from "@clerk/nextjs/server";
+import bcrypt from "bcryptjs";
 
-// ------------------------ SUBJECT ------------------------
-export const createSubject = async (data: SubjectSchema) => {
+import {
+  CreateSubjectSchema,
+  UpdateSubjectSchema,
+  DeleteSubjectSchema,
+  CreateClassSchema,
+  UpdateClassSchema,
+  DeleteClassSchema,
+  CreateTeacherSchema,
+  UpdateTeacherSchema,
+  DeleteTeacherSchema,
+  CreateStudentSchema,
+  UpdateStudentSchema,
+  DeleteStudentSchema,
+  CreateExamSchema,
+  UpdateExamSchema,
+  DeleteExamSchema,
+} from "./formValidationSchemas";
+
+//
+// ---------------- SUBJECT ----------------
+//
+export async function createSubject(data: CreateSubjectSchema) {
   try {
     await prisma.subject.create({
       data: {
@@ -23,12 +36,12 @@ export const createSubject = async (data: SubjectSchema) => {
     });
     return { success: true };
   } catch (err) {
-    console.error(err);
+    console.error("createSubject error:", err);
     return { success: false };
   }
-};
+}
 
-export const updateSubject = async (data: SubjectSchema & { id: number }) => {
+export async function updateSubject(data: UpdateSubjectSchema) {
   try {
     await prisma.subject.update({
       where: { id: data.id },
@@ -41,153 +54,152 @@ export const updateSubject = async (data: SubjectSchema & { id: number }) => {
     });
     return { success: true };
   } catch (err) {
-    console.error(err);
+    console.error("updateSubject error:", err);
     return { success: false };
   }
-};
+}
 
-export const deleteSubject = async (id: number) => {
+export async function deleteSubject(data: DeleteSubjectSchema) {
   try {
-    await prisma.subject.delete({ where: { id } });
+    await prisma.subject.delete({ where: { id: data.id } });
     return { success: true };
   } catch (err) {
-    console.error(err);
+    console.error("deleteSubject error:", err);
     return { success: false };
   }
-};
+}
 
-// ------------------------ CLASS ------------------------
-export const createClass = async (data: ClassSchema) => {
+//
+// ---------------- CLASS ----------------
+//
+export async function createClass(data: CreateClassSchema) {
   try {
     await prisma.class.create({ data });
     return { success: true };
   } catch (err) {
-    console.error(err);
+    console.error("createClass error:", err);
     return { success: false };
   }
-};
+}
 
-export const updateClass = async (data: ClassSchema & { id: number }) => {
+export async function updateClass(data: UpdateClassSchema) {
   try {
-    await prisma.class.update({ where: { id: data.id }, data });
-    return { success: true };
-  } catch (err) {
-    console.error(err);
-    return { success: false };
-  }
-};
-
-export const deleteClass = async (id: number) => {
-  try {
-    await prisma.class.delete({ where: { id } });
-    return { success: true };
-  } catch (err) {
-    console.error(err);
-    return { success: false };
-  }
-};
-
-// ------------------------ TEACHER ------------------------
-export const createTeacher = async (data: TeacherSchema) => {
-  try {
-    const user = await clerkClient.users.createUser({
-      username: data.username,
-      password: data.password,
-      firstName: data.name,
-      lastName: data.surname,
-      publicMetadata: { role: "teacher" },
+    await prisma.class.update({
+      where: { id: data.id },
+      data,
     });
+    return { success: true };
+  } catch (err) {
+    console.error("updateClass error:", err);
+    return { success: false };
+  }
+}
+
+export async function deleteClass(data: DeleteClassSchema) {
+  try {
+    await prisma.class.delete({ where: { id: data.id } });
+    return { success: true };
+  } catch (err) {
+    console.error("deleteClass error:", err);
+    return { success: false };
+  }
+}
+
+//
+// ---------------- TEACHER ----------------
+//
+export async function createTeacher(data: CreateTeacherSchema) {
+  try {
+    const hashedPassword = await bcrypt.hash(data.password, 10);
 
     await prisma.teacher.create({
       data: {
-        id: user.id,
         username: data.username,
+        password: hashedPassword,
         name: data.name,
         surname: data.surname,
-        email: data.email || null,
+        email: data.email?.trim() || null,
         phone: data.phone || null,
         address: data.address,
         img: data.img || null,
         bloodType: data.bloodType,
         sex: data.sex,
         birthday: data.birthday,
-        subjects: {
-          connect: data.subjects?.map((id) => ({ id: parseInt(id) })),
-        },
+        role: "teacher",
+        subjects: data.subjects
+          ? { connect: data.subjects.map((id) => ({ id })) }
+          : undefined,
       },
     });
+
     return { success: true };
   } catch (err) {
-    console.error(err);
+    console.error("createTeacher error:", err);
     return { success: false };
   }
-};
+}
 
-export const updateTeacher = async (data: TeacherSchema & { id: string }) => {
+export async function updateTeacher(data: UpdateTeacherSchema) {
   try {
-    await clerkClient.users.updateUser(data.id, {
+    const updateData: any = {
       username: data.username,
-      ...(data.password && { password: data.password }),
-      firstName: data.name,
-      lastName: data.surname,
-    });
+      name: data.name,
+      surname: data.surname,
+      email: data.email?.trim() || null,
+      phone: data.phone || null,
+      address: data.address,
+      img: data.img || null,
+      bloodType: data.bloodType,
+      sex: data.sex,
+      birthday: data.birthday,
+    };
+
+    if (data.password && data.password.trim() !== "") {
+      updateData.password = await bcrypt.hash(data.password, 10);
+    }
+
+    if (data.subjects) {
+      updateData.subjects = {
+        set: data.subjects.map((id) => ({ id })),
+      };
+    }
 
     await prisma.teacher.update({
       where: { id: data.id },
-      data: {
-        ...(data.password && { password: data.password }),
-        username: data.username,
-        name: data.name,
-        surname: data.surname,
-        email: data.email || null,
-        phone: data.phone || null,
-        address: data.address,
-        img: data.img || null,
-        bloodType: data.bloodType,
-        sex: data.sex,
-        birthday: data.birthday,
-        subjects: {
-          set: data.subjects?.map((id) => ({ id: parseInt(id) })),
-        },
-      },
+      data: updateData,
     });
 
     return { success: true };
   } catch (err) {
-    console.error(err);
+    console.error("updateTeacher error:", err);
     return { success: false };
   }
-};
+}
 
-export const deleteTeacher = async (id: string) => {
+export async function deleteTeacher(data: DeleteTeacherSchema) {
   try {
-    await clerkClient.users.deleteUser(id);
-    await prisma.teacher.delete({ where: { id } });
+    await prisma.teacher.delete({ where: { id: data.id } });
     return { success: true };
   } catch (err) {
-    console.error(err);
+    console.error("deleteTeacher error:", err);
     return { success: false };
   }
-};
+}
 
-// ------------------------ STUDENT ------------------------
-export const createStudent = async (data: StudentSchema) => {
+//
+// ---------------- STUDENT ----------------
+//
+export async function createStudent(data: CreateStudentSchema) {
   try {
-    const user = await clerkClient.users.createUser({
-      username: data.username,
-      password: data.password,
-      firstName: data.name,
-      lastName: data.surname,
-      publicMetadata: { role: "student" },
-    });
+    const hashedPassword = await bcrypt.hash(data.password, 10);
 
     await prisma.student.create({
       data: {
-        id: user.id,
         username: data.username,
+        password: hashedPassword,
         name: data.name,
         surname: data.surname,
-        email: data.email || null,
+        email: data.email?.trim() || null,
         phone: data.phone || null,
         address: data.address,
         img: data.img || null,
@@ -197,90 +209,93 @@ export const createStudent = async (data: StudentSchema) => {
         gradeId: data.gradeId,
         classId: data.classId,
         parentId: data.parentId,
+        role: "student",
       },
     });
 
     return { success: true };
   } catch (err) {
-    console.error(err);
+    console.error("createStudent error:", err);
     return { success: false };
   }
-};
+}
 
-export const updateStudent = async (data: StudentSchema & { id: string }) => {
+export async function updateStudent(data: UpdateStudentSchema) {
   try {
-    await clerkClient.users.updateUser(data.id, {
+    const updateData: any = {
       username: data.username,
-      ...(data.password && { password: data.password }),
-      firstName: data.name,
-      lastName: data.surname,
-    });
+      name: data.name,
+      surname: data.surname,
+      email: data.email?.trim() || null,
+      phone: data.phone || null,
+      address: data.address,
+      img: data.img || null,
+      bloodType: data.bloodType,
+      sex: data.sex,
+      birthday: data.birthday,
+      gradeId: data.gradeId,
+      classId: data.classId,
+      parentId: data.parentId,
+    };
+
+    if (data.password && data.password.trim() !== "") {
+      updateData.password = await bcrypt.hash(data.password, 10);
+    }
 
     await prisma.student.update({
       where: { id: data.id },
-      data: {
-        ...(data.password && { password: data.password }),
-        username: data.username,
-        name: data.name,
-        surname: data.surname,
-        email: data.email || null,
-        phone: data.phone || null,
-        address: data.address,
-        img: data.img || null,
-        bloodType: data.bloodType,
-        sex: data.sex,
-        birthday: data.birthday,
-        gradeId: data.gradeId,
-        classId: data.classId,
-        parentId: data.parentId,
-      },
+      data: updateData,
     });
 
     return { success: true };
   } catch (err) {
-    console.error(err);
+    console.error("updateStudent error:", err);
     return { success: false };
   }
-};
+}
 
-export const deleteStudent = async (id: string) => {
+export async function deleteStudent(data: DeleteStudentSchema) {
   try {
-    await clerkClient.users.deleteUser(id);
-    await prisma.student.delete({ where: { id } });
+    await prisma.student.delete({ where: { id: data.id } });
     return { success: true };
   } catch (err) {
-    console.error(err);
+    console.error("deleteStudent error:", err);
     return { success: false };
   }
-};
+}
 
-// ------------------------ EXAM ------------------------
-export const createExam = async (data: ExamSchema) => {
+//
+// ---------------- EXAM ----------------
+//
+export async function createExam(data: CreateExamSchema) {
   try {
     await prisma.exam.create({ data });
     return { success: true };
   } catch (err) {
-    console.error(err);
+    console.error("createExam error:", err);
     return { success: false };
   }
-};
+}
 
-export const updateExam = async (data: ExamSchema & { id: number }) => {
+export async function updateExam(data: UpdateExamSchema) {
   try {
-    await prisma.exam.update({ where: { id: data.id }, data });
+    await prisma.exam.update({
+      where: { id: data.id },
+      data,
+    });
     return { success: true };
   } catch (err) {
-    console.error(err);
+    console.error("updateExam error:", err);
     return { success: false };
   }
-};
+}
 
-export const deleteExam = async (id: number) => {
+export async function deleteExam(data: DeleteExamSchema) {
   try {
-    await prisma.exam.delete({ where: { id } });
+    await prisma.exam.delete({ where: { id: data.id } });
     return { success: true };
   } catch (err) {
-    console.error(err);
+    console.error("deleteExam error:", err);
     return { success: false };
   }
-};
+}

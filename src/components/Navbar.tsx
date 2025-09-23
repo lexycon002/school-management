@@ -1,9 +1,27 @@
-import { UserButton } from "@clerk/nextjs";
-import { currentUser } from "@clerk/nextjs/server";
-import Image from "next/image";
+"use client"
 
-const Navbar = async () => {
-  const user = await currentUser();
+import { signOut } from "next-auth/react"
+import Image from "next/image"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+
+type NavbarProps = {
+  session: {
+    user?: {
+      name?: string | null
+      role?: string | null
+      image?: string | null
+    }
+  } | null
+}
+
+function Navbar({ session }: NavbarProps) {
   return (
     <div className="flex items-center justify-between p-4">
       {/* SEARCH BAR */}
@@ -15,6 +33,7 @@ const Navbar = async () => {
           className="w-[200px] p-2 bg-transparent outline-none"
         />
       </div>
+
       {/* ICONS AND USER */}
       <div className="flex items-center gap-6 justify-end w-full">
         <div className="bg-white rounded-full w-7 h-7 flex items-center justify-center cursor-pointer">
@@ -26,17 +45,41 @@ const Navbar = async () => {
             0
           </div>
         </div>
+
         <div className="flex flex-col">
-          <span className="text-xs leading-3 font-medium">Hammad Awowole</span>
+          <span className="text-xs leading-3 font-medium">
+            {session?.user?.name ?? "Guest"}
+          </span>
           <span className="text-[10px] text-gray-500 text-right">
-            {user?.publicMetadata?.role as string}
+            {session?.user?.role ?? "No role"}
           </span>
         </div>
-        {/* <Image src="/avatar.png" alt="" width={36} height={36} className="rounded-full"/> */}
-        <UserButton />
+
+        {/* Avatar Dropdown */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Image
+              src={session?.user?.image ?? "/avatar.png"}
+              alt="User avatar"
+              width={36}
+              height={36}
+              className="rounded-full cursor-pointer"
+            />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>My Account</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={() => alert("Go to profile")}>
+              Profile
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => signOut()}>
+              Logout
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Navbar;
+export default Navbar

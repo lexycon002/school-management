@@ -1,6 +1,8 @@
-import { currentUser } from "@clerk/nextjs/server";
-import Image from "next/image";
-import Link from "next/link";
+"use client"
+
+import { useSession } from "next-auth/react"
+import Image from "next/image"
+import Link from "next/link"
 
 const menuItems = [
   {
@@ -15,79 +17,79 @@ const menuItems = [
       {
         icon: "/teacher.png",
         label: "Teachers",
-        href: "/list/teachers",
+        href: "/dashboard/list/teachers",
         visible: ["admin", "teacher"],
       },
       {
         icon: "/student.png",
         label: "Students",
-        href: "/list/students",
+        href: "/dashboard/list/students",
         visible: ["admin", "teacher"],
       },
       {
         icon: "/parent.png",
         label: "Parents",
-        href: "/list/parents",
+        href: "/dashboard/list/parents",
         visible: ["admin", "teacher"],
       },
       {
         icon: "/subject.png",
         label: "Subjects",
-        href: "/list/subjects",
+        href: "/dashboard/list/subjects",
         visible: ["admin"],
       },
       {
         icon: "/class.png",
         label: "Classes",
-        href: "/list/classes",
+        href: "/dashboard/list/classes",
         visible: ["admin", "teacher"],
       },
       {
         icon: "/lesson.png",
         label: "Lessons",
-        href: "/list/lessons",
+        href: "/dashboard/list/lessons",
         visible: ["admin", "teacher"],
       },
       {
         icon: "/exam.png",
         label: "Exams",
-        href: "/list/exams",
+        href: "/dashboard/list/exams",
         visible: ["admin", "teacher", "student", "parent"],
       },
       {
         icon: "/assignment.png",
         label: "Assignments",
-        href: "/list/assignments",
+        href: "/dashboard/list/assignments",
         visible: ["admin", "teacher", "student", "parent"],
       },
       {
         icon: "/result.png",
         label: "Results",
-        href: "/list/results",
+        href: "/dashboard/list/results",
         visible: ["admin", "teacher", "student", "parent"],
       },
       {
         icon: "/attendance.png",
         label: "Attendance",
-        href: "/list/attendance",
+        href: "/dashboard/list/attendance",
         visible: ["admin", "teacher", "student", "parent"],
       },
       {
         icon: "/calendar.png",
         label: "Events",
-        href: "/list/events",
+        href: "/dashboard/list/events",
         visible: ["admin", "teacher", "student", "parent"],
       },
       {
         icon: "/message.png",
         label: "Messages",
-        href: "/list/messages",
+        href: "/dashboard/list/messages",
         visible: ["admin", "teacher", "student", "parent"],
       },
       {
         icon: "/announcement.png",
         label: "Announcements",
-        href: "/list/announcements",
+        href: "/dashboard/list/announcements",
         visible: ["admin", "teacher", "student", "parent"],
       },
     ],
@@ -115,36 +117,38 @@ const menuItems = [
       },
     ],
   },
-];
+]
 
-const Menu = async () => {
-  const user = await currentUser();
-  const role = user?.publicMetadata.role as string;
+const Menu = () => {
+  const { data: session } = useSession()
+  const role = session?.user?.role as string
+
   return (
     <div className="mt-4 text-sm">
-      {menuItems.map((i) => (
-        <div className="flex flex-col gap-2" key={i.title}>
+      {menuItems.map((section) => (
+        <div className="flex flex-col gap-2" key={section.title}>
           <span className="hidden lg:block text-white font-light my-4">
-            {i.title}
+            {section.title}
           </span>
-          {i.items.map((item) => {
-            if (item.visible.includes(role)) {
+          {section.items.map((item) => {
+            if (role && item.visible.includes(role)) {
               return (
                 <Link
                   href={item.href}
                   key={item.label}
-                  className="flex items-center justify-center lg:justify-start gap-4 text-white py-2 md:px-2 rounded-md hover:bg-gray-200"
+                  className="flex items-center justify-center lg:justify-start gap-4 text-black py-2 md:px-2 rounded-md hover:bg-gray-200"
                 >
-                  <Image src={item.icon} alt="" width={20} height={20} />
+                  <Image src={item.icon} alt={item.label} width={20} height={20} />
                   <span className="hidden lg:block">{item.label}</span>
                 </Link>
-              );
+              )
             }
+            return null
           })}
         </div>
       ))}
     </div>
-  );
-};
+  )
+}
 
-export default Menu;
+export default Menu

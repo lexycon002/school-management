@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { ClerkProvider } from "@clerk/nextjs";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Providers from "./provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,13 +18,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider>
-      <html lang="en">
-        <body className={inter.className}>
+    <html lang="en">
+      <body className={inter.className}>
+        <Providers>
           {children}
-          <ToastContainer position="bottom-right" theme="dark"/>
-        </body>
-      </html>
-    </ClerkProvider>
+        </Providers>
+        <ToastContainer position="bottom-right" theme="dark"/>
+      </body>
+    </html>
   );
 }
+

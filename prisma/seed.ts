@@ -1,24 +1,38 @@
 import { Day, PrismaClient, UserSex } from "@prisma/client";
+import bcrypt from "bcryptjs";
+
 const prisma = new PrismaClient();
 
 async function main() {
   // ADMIN
-  await prisma.admin.create({
-    data: { id: "admin1", username: "admin1" },
+  const admin1Pass = await bcrypt.hash("admin1pass", 10);
+  const admin2Pass = await bcrypt.hash("admin2pass", 10);
+  await prisma.admin.upsert({
+    where: { id: "admin1" },
+    update: {},
+    create: { id: "admin1", username: "admin1", password: admin1Pass },
   });
-  await prisma.admin.create({
-    data: { id: "admin2", username: "admin2" },
+  await prisma.admin.upsert({
+    where: { id: "admin2" },
+    update: {},
+    create: { id: "admin2", username: "admin2", password: admin2Pass },
   });
 
   // GRADE
   for (let i = 1; i <= 6; i++) {
-    await prisma.grade.create({ data: { level: i } });
+    await prisma.grade.upsert({
+      where: { level: i },
+      update: {},
+      create: { level: i },
+    });
   }
 
   // CLASS
   for (let i = 1; i <= 6; i++) {
-    await prisma.class.create({
-      data: {
+    await prisma.class.upsert({
+      where: { name: `${i}A` },
+      update: {},
+      create: {
         name: `${i}A`,
         gradeId: i,
         capacity: Math.floor(Math.random() * (20 - 15 + 1)) + 15,
@@ -40,15 +54,23 @@ async function main() {
     { name: "Art" },
   ];
   for (const subject of subjectData) {
-    await prisma.subject.create({ data: subject });
+    await prisma.subject.upsert({
+      where: { name: subject.name },
+      update: {},
+      create: subject,
+    });
   }
 
   // TEACHER
   for (let i = 1; i <= 15; i++) {
-    await prisma.teacher.create({
-      data: {
+    const teacherPass = await bcrypt.hash(`teacher${i}pass`, 10);
+    await prisma.teacher.upsert({
+      where: { id: `teacher${i}` },
+      update: {},
+      create: {
         id: `teacher${i}`,
         username: `teacher${i}`,
+        password: teacherPass,
         name: `TName${i}`,
         surname: `TSurname${i}`,
         email: `teacher${i}@example.com`,
@@ -84,25 +106,35 @@ async function main() {
 
   // PARENT
   for (let i = 1; i <= 25; i++) {
-    await prisma.parent.create({
-      data: {
+    const parentPass = await bcrypt.hash(`parent${i}pass`, 10);
+    await prisma.parent.upsert({
+      where: { id: `parentId${i}` },
+      update: {},
+      create: {
         id: `parentId${i}`,
         username: `parentId${i}`,
+        password: parentPass,
         name: `PName ${i}`,
         surname: `PSurname ${i}`,
         email: `parent${i}@example.com`,
         phone: `123-456-789${i}`,
         address: `Address${i}`,
+        bloodType: "B+",
+        img: "",
       },
     });
   }
 
   // STUDENT
   for (let i = 1; i <= 50; i++) {
-    await prisma.student.create({
-      data: {
+    const studentPass = await bcrypt.hash(`student${i}pass`, 10);
+    await prisma.student.upsert({
+      where: { id: `student${i}` },
+      update: {},
+      create: {
         id: `student${i}`,
         username: `student${i}`,
+        password: studentPass,
         name: `SName${i}`,
         surname: `SSurname ${i}`,
         email: `student${i}@example.com`,

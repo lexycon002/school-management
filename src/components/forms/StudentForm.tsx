@@ -2,40 +2,40 @@
 
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { FieldError, useForm } from "react-hook-form";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import { CldUploadWidget } from "next-cloudinary";
 
-import InputField from "../InputField";
 import {
-  studentSchema,
-  StudentSchema,
+  createStudentSchema,
+  updateStudentSchema,
+  CreateStudentSchema,
+  UpdateStudentSchema,
 } from "@/lib/formValidationSchemas";
-import {
-  createStudent,
-  updateStudent,
-} from "@/lib/actions";
+import { createStudent, updateStudent } from "@/lib/actions";
+import InputField from "../InputField";
 
-const StudentForm = ({
-  type,
-  data,
-  setOpen,
-  relatedData,
-}: {
+type StudentFormProps = {
   type: "create" | "update";
   data?: any;
   setOpen: Dispatch<SetStateAction<boolean>>;
-  relatedData?: any;
-}) => {
-  // ✅ react-hook-form for validation
+  relatedData?: { grades: any[]; classes: any[] };
+};
+
+const StudentForm = ({ type, data, setOpen, relatedData }: StudentFormProps) => {
+  const router = useRouter();
+  const [img, setImg] = useState<any>();
+
+  // Pick schema and type
+  const schema = type === "create" ? createStudentSchema : updateStudentSchema;
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<StudentSchema>({
-    resolver: zodResolver(studentSchema),
+  } = useForm<any>({
+    resolver: zodResolver(schema),
     defaultValues: {
       ...data,
       birthday: data?.birthday
@@ -44,22 +44,26 @@ const StudentForm = ({
     },
   });
 
-  const [img, setImg] = useState<any>();
+  // Action function based on type
+  const actionFn = type === "create" ? createStudent : updateStudent;
 
-  // ✅ useActionState for server submission
-  const [state, formAction] = React.useActionState(
-    type === "create" ? createStudent : updateStudent,
-    { success: false, error: false }
-  );
+  // State for error/success
+  const [state, setState] = useState<{ success: boolean; error?: boolean }>({ success: false });
 
-  const router = useRouter();
-
-  // ✅ Submit handler with react-hook-form
-  const onSubmit = handleSubmit((formData) => {
-    formAction({ ...formData, img: img?.secure_url });
+  // Handle submit
+  const onSubmit = handleSubmit(async (formData) => {
+    const result = await actionFn({
+      ...formData,
+      img: img?.secure_url,
+    });
+    if (result?.success) {
+      setState({ success: true });
+    } else {
+      setState({ success: false, error: true });
+    }
   });
 
-  // ✅ success toast + close modal + refresh page
+  // ✅ toast + close modal on success
   useEffect(() => {
     if (state.success) {
       toast(`Student has been ${type === "create" ? "created" : "updated"}!`);
@@ -68,7 +72,7 @@ const StudentForm = ({
     }
   }, [state.success, type, setOpen, router]);
 
-  const { grades, classes } = relatedData;
+  const { grades = [], classes = [] } = relatedData || {};
 
   return (
     <form className="flex flex-col gap-8" onSubmit={onSubmit}>
@@ -81,31 +85,16 @@ const StudentForm = ({
         Authentication Information
       </span>
       <div className="flex justify-between flex-wrap gap-4">
-        <InputField
-          label="Username"
-          name="username"
-          register={register}
-          error={errors.username}
-        />
-        <InputField
-          label="Email"
-          name="email"
-          register={register}
-          error={errors.email}
-        />
-        <InputField
-          label="Password"
-          name="password"
-          type="password"
-          register={register}
-          error={errors.password}
-        />
+  <InputField label="Username" name="username" register={register} error={errors.username as FieldError} />
+  <InputField label="Email" name="email" register={register} error={errors.email as FieldError} />
+  <InputField label="Password" name="password" type="password" register={register} error={errors.password as FieldError} />
       </div>
 
       {/* --- PERSONAL INFO --- */}
       <span className="text-xs text-gray-400 font-medium">
         Personal Information
       </span>
+
       <CldUploadWidget
         uploadPreset="school"
         onSuccess={(result, { widget }) => {
@@ -125,16 +114,17 @@ const StudentForm = ({
       </CldUploadWidget>
 
       <div className="flex justify-between flex-wrap gap-4">
-        <InputField label="First Name" name="name" register={register} error={errors.name} />
-        <InputField label="Last Name" name="surname" register={register} error={errors.surname} />
-        <InputField label="Phone" name="phone" register={register} error={errors.phone} />
-        <InputField label="Address" name="address" register={register} error={errors.address} />
-        <InputField label="Blood Type" name="bloodType" register={register} error={errors.bloodType} />
-        <InputField label="Birthday" name="birthday" register={register} error={errors.birthday} type="date" />
-        <InputField label="Parent Id" name="parentId" register={register} error={errors.parentId} />
+  <InputField label="First Name" name="name" register={register} error={errors.name as FieldError} />
+  <InputField label="Last Name" name="surname" register={register} error={errors.surname as FieldError} />
+  <InputField label="Phone" name="phone" register={register} error={errors.phone as FieldError} />
+  <InputField label="Address" name="address" register={register} error={errors.address as FieldError} />
+  <InputField label="Blood Type" name="bloodType" register={register} error={errors.bloodType as FieldError} />
+  <InputField label="Birthday" name="birthday" register={register} error={errors.birthday as FieldError} type="date" />
+  <InputField label="Parent Id" name="parentId" register={register} error={errors.parentId as FieldError} />
 
-        {data && (
-          <InputField label="Id" name="id" register={register} error={errors.id} hidden />
+        {/* hidden ID for update */}
+        {type === "update" && data?.id && (
+          <InputField label="ID" name="id" register={register} type="hidden" />
         )}
 
         {/* SEX */}
