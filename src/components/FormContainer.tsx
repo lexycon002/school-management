@@ -1,7 +1,7 @@
 import prisma from "@/lib/prisma";
 import FormModal from "./FormModal";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/pages/api/auth/[...nextauth]";
+import { authOptions } from "@/lib/authOptions";
 
 export type FormContainerProps = {
   table:

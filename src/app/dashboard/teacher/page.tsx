@@ -1,7 +1,8 @@
 import Announcements from "@/components/Announcements";
 import BigCalendarContainer from "@/components/BigCalendarContainer";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/pages/api/auth/[...nextauth]";
+import { authOptions } from "@/lib/authOptions";
+
 
 const TeacherPage = async () => {
   const session = await getServerSession(authOptions);

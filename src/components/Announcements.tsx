@@ -1,7 +1,7 @@
+import { authOptions } from "@/lib/authOptions"
 import prisma from "@/lib/prisma"
 import { getServerSession } from "next-auth"    
-import { authOptions } from "@/pages/api/auth/[...nextauth]"
-
+`import { authOptions } from "@/lib/authOptions"`
 
 const Announcements = async () => {     
   const session = await getServerSession(authOptions)

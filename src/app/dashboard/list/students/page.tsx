@@ -10,7 +10,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { getServerSession } from "next-auth/next";
-import authOptions from "@/pages/api/auth/[...nextauth]";
+import { authOptions } from "@/lib/authOptions";
 
 type StudentList = Student & { class: Class };
 
@@ -23,15 +23,14 @@ const StudentListPage = async ({
   const session = (await getServerSession(authOptions)) as any;
   const role = session?.user?.role;
 
-  const { page, ...queryParams } = params;
+  const { page, ...queryParams } =await  params;
   const p = page ? parseInt(Array.isArray(page) ? page[0] : page) : 1;
 
-  // Build query conditions
+  // URL PARAMS CONDITION
   const query: Prisma.StudentWhereInput = {};
 
   for (const [key, value] of Object.entries(queryParams)) {
     if (!value) continue;
-
     const val = Array.isArray(value) ? value[0] : value;
 
     switch (key) {
@@ -111,6 +110,8 @@ const StudentListPage = async ({
 
   return (
     <div className="bg-white p-4 rounded-md flex-1 m-4 mt-0">
+      {/* DEBUG: Show current user role */}
+      <div className="mb-2 p-2 bg-yellow-100 text-yellow-800 rounded text-sm">Current role: <b>{role ? role : "(none)"}</b></div>
       {/* TOP */}
       <div className="flex items-center justify-between">
         <h1 className="hidden md:block text-lg font-semibold">All Students</h1>

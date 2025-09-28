@@ -8,7 +8,7 @@ import { Announcement, Class, Prisma } from "@prisma/client";
 import Image from "next/image";
 
 import { getServerSession } from "next-auth/next";
-import authOptions from "@/pages/api/auth/[...nextauth]";
+import { authOptions } from "@/lib/authOptions";
 
 type AnnouncementList = Announcement & { class: Class };
 

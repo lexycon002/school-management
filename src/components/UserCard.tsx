@@ -17,7 +17,7 @@ const UserCard = async ({
   const data = await modelMap[type].count();
 
   return (
-    <div className="rounded-2xl odd:bg-myBrown even:bg-secondary p-4 flex-1 min-w-[120px]">
+    <div className="rounded-2xl odd:bg-myBrown even:bg-myBlue p-4 flex-1 min-w-[120px]">
         <div className="flex items-center justify-between">
           <span className="text-[10px] bg-white px-2 py-1 rounded-full text-green-600">2025/26  </span>
           <Image src="/more.png" alt="more" width={20} height={20} className="float-right cursor-pointer"/>

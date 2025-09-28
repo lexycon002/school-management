@@ -13,8 +13,12 @@ import {
 } from "@/lib/actions";
 import { FormContainerProps } from "./FormContainer";
 import Table from "./Table";
+import ParentForm from "./forms/ParentForm";
 
-const deleteActionMap = {
+const deleteActionMap: Record<
+  "subject" | "class" | "teacher" | "student" | "exam",
+  (data: { id: string | number }) => Promise<{ success: boolean }>
+> = {
   subject: deleteSubject,
   class: deleteClass,
   teacher: deleteTeacher,
@@ -51,6 +55,9 @@ const forms: {
   exam: (setOpen, type, data, relatedData) => (
     <ExamForm type={type} data={data} setOpen={setOpen} relatedData={relatedData} />
   ),
+  parent: (setOpen, type, data, relatedData) => (
+    <ParentForm type={type} data={data} setOpen={setOpen} relatedData={relatedData} />
+  ),
 };
 
 const FormModal = ({
@@ -64,17 +71,25 @@ const FormModal = ({
   const router = useRouter();
   const size = type === "create" ? "w-8 h-8" : "w-7 h-7";
   const bgColor =
-    type === "create" ? "bg-myBrown" : type === "update" ? "bg-secondary" : "bg-red-500";
+    type === "create" ? "bg-myBrown" : type === "update" ? "bg-myBrown" : "bg-red-500";
 
   const handleDelete = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!id) return;
 
     try {
-       await deleteActionMap[Table](id);
-      toast(`${table} deleted successfully!`);
-      setOpen(false);
-      router.refresh();
+      let deleteId: any = id;
+      if (table === "teacher" || table === "student") deleteId = String(id);
+      else deleteId = Number(id);
+
+      if (type === "delete" && table in deleteActionMap) {
+        await deleteActionMap[table as keyof typeof deleteActionMap]({ id: deleteId });
+        toast(`${table} deleted successfully!`);
+        setOpen(false);
+        router.refresh();
+      } else {
+        toast.error("Delete not supported for this table type!");
+      }
     } catch (err) {
       console.error(err);
       toast.error("Failed to delete!");

@@ -8,7 +8,7 @@ import { Parent, Prisma, Student } from "@prisma/client";
 import Image from "next/image";
 
 import { getServerSession } from "next-auth/next";
-import authOptions from "@/pages/api/auth/[...nextauth]";
+import { authOptions } from "@/lib/authOptions";
 
 type ParentList = Parent & { students: Student[] };
 
@@ -22,7 +22,7 @@ const ParentListPage = async ({
 
   // unwrap promise
   const params = (await searchParams) || {};
-  const { page, ...queryParams } = params;
+  const { page, ...queryParams } = await params;
 
   // normalize page param
   const p = page ? parseInt(Array.isArray(page) ? page[0] : page) : 1;
@@ -71,7 +71,7 @@ const ParentListPage = async ({
   const renderRow = (item: ParentList) => (
     <tr
       key={item.id}
-      className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-myBrown"
+      className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-gray-100"
     >
       <td className="flex items-center gap-4 p-4">
         <div className="flex flex-col">

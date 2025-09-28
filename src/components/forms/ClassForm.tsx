@@ -26,12 +26,16 @@ const schema = z.object({
 type Inputs = z.infer<typeof schema>;
 
 const ClassForm = ({
-  type, data,
-} : {
+  type,
+  data,
+  setOpen,
+  relatedData,
+}: {
   type: "create" | "update";
   data?: any;
-
-} ) => {
+  setOpen?: React.Dispatch<React.SetStateAction<boolean>>;
+  relatedData?: any;
+}) => {
   const {
     register,
     handleSubmit,

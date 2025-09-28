@@ -19,6 +19,9 @@ import {
   CreateExamSchema,
   UpdateExamSchema,
   DeleteExamSchema,
+  CreateParentSchema,
+  UpdateParentSchema,
+  DeleteParentSchema,
 } from "./formValidationSchemas";
 
 //
@@ -60,11 +63,75 @@ export async function updateSubject(data: UpdateSubjectSchema) {
 }
 
 export async function deleteSubject(data: DeleteSubjectSchema) {
+
   try {
     await prisma.subject.delete({ where: { id: data.id } });
     return { success: true };
   } catch (err) {
     console.error("deleteSubject error:", err);
+    return { success: false };
+  }
+}
+
+// ---------------- PARENT ----------------
+export async function createParent(data: CreateParentSchema) {
+  try {
+    const hashedPassword = await bcrypt.hash(data.password, 10);
+    await prisma.parent.create({
+      data: {
+        username: data.username,
+        password: hashedPassword,
+        name: data.name,
+        surname: data.surname,
+        email: data.email?.trim() || "",
+        phone: data.phone || "",
+        address: data.address,
+        img: data.img || "",
+        bloodType: data.bloodType,
+        createdAt: data.createdAt,
+        role: "parent",
+      },
+    });
+    return { success: true };
+  } catch (err) {
+    console.error("createParent error:", err);
+    return { success: false };
+  }
+}
+
+export async function updateParent(data: UpdateParentSchema) {
+  try {
+    const updateData: any = {
+      username: data.username,
+      name: data.name,
+      surname: data.surname,
+      email: data.email?.trim() || "",
+      phone: data.phone || "",
+      address: data.address,
+      img: data.img || "",
+      bloodType: data.bloodType,
+      createdAt: data.createdAt,
+    };
+    if (data.password && data.password.trim() !== "") {
+      updateData.password = await bcrypt.hash(data.password, 10);
+    }
+    await prisma.parent.update({
+      where: { id: data.id },
+      data: updateData,
+    });
+    return { success: true };
+  } catch (err) {
+    console.error("updateParent error:", err);
+    return { success: false };
+  }
+}
+
+export async function deleteParent(data: DeleteParentSchema) {
+  try {
+    await prisma.parent.delete({ where: { id: data.id } });
+    return { success: true };
+  } catch (err) {
+    console.error("deleteParent error:", err);
     return { success: false };
   }
 }

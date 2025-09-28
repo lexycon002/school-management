@@ -7,9 +7,8 @@ import { Class, Prisma, Subject, Teacher } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
 import { ITEM_PER_PAGE } from "@/lib/settings";
-
 import { getServerSession } from "next-auth/next";
-import authOptions from "@/pages/api/auth/[...nextauth]";
+import { authOptions } from "@/lib/authOptions";
 
 type TeacherList = Teacher & { subjects: Subject[] } & { classes: Class[] };
 
@@ -21,7 +20,7 @@ const TeacherListPage = async ({
   const session = (await getServerSession(authOptions)) as any;
   const role = session?.user?.role;
 
-  const { page, ...queryParams } = searchParams || {};
+  const { page, ...queryParams } = await searchParams || {};
   const p = page ? parseInt(Array.isArray(page) ? page[0] : page) : 1;
 
   // URL PARAMS CONDITION
@@ -56,7 +55,7 @@ const TeacherListPage = async ({
     { header: "Info", accessor: "info" },
     { header: "Teacher ID", accessor: "teacherId", className: "hidden md:table-cell" },
     { header: "Subjects", accessor: "subjects", className: "hidden md:table-cell" },
-    { header: "Classes", accessor: "classes", className: "hidden md:table-cell" },
+    // { header: "Classes", accessor: "classes", className: "hidden md:table-cell" },
     { header: "Phone", accessor: "phone", className: "hidden lg:table-cell" },
     { header: "Address", accessor: "address", className: "hidden lg:table-cell" },
     ...(role === "admin" ? [{ header: "Actions", accessor: "action" }] : []),
@@ -85,9 +84,9 @@ const TeacherListPage = async ({
       <td className="hidden md:table-cell">
         {item.subjects.map((subject) => subject.name).join(", ")}
       </td>
-      <td className="hidden md:table-cell">
+      {/* <td className="hidden md:table-cell">
         {item.classes.map((classItem) => classItem.name).join(", ")}
-      </td>
+      </td> */}
       <td className="hidden md:table-cell">{item.phone}</td>
       <td className="hidden md:table-cell">{item.address}</td>
       <td>
@@ -107,7 +106,9 @@ const TeacherListPage = async ({
 
   return (
     <div className="bg-white p-4 rounded-md flex-1 m-4 mt-0">
-      {/* TOP */}
+      {/* DEBUG: Show current user role */}
+      <div className="mb-2 p-2 bg-yellow-100 text-yellow-800 rounded text-sm">Current role: <b>{role ? role : "(none)"}</b></div>
+  {/* TOP */}
       <div className="flex items-center justify-between">
         <h1 className="hidden md:block text-lg font-semibold">All Teachers</h1>
         <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">

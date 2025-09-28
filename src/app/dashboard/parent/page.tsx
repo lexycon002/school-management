@@ -2,11 +2,11 @@ import Announcements from "@/components/Announcements";
 import BigCalendarContainer from "@/components/BigCalendarContainer";
 import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/pages/api/auth/[...nextauth]";
-
+import { authOptions } from "@/lib/authOptions";
 const ParentPage = async () => {
   const session = await getServerSession(authOptions);
-  const currentUserId = session?.user?.id; // 👈 make sure user.id is exposed in [...nextauth].ts
+
+  const currentUserId = session?.user?.id; 
 
   if (!currentUserId) {
     return <p className="p-4">Not authenticated.</p>;

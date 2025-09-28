@@ -5,9 +5,10 @@ import { useForm } from "react-hook-form";
 import InputField from "../InputField";
 import Image from "next/image";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { teacherSchema, TeacherSchema } from "@/lib/formValidationSchemas";
-import { useFormState } from "react-dom";
+import { createTeacherSchema, updateTeacherSchema} from "@/lib/formValidationSchemas";
+import { useActionState, startTransition } from "react";
 import { createTeacher, updateTeacher } from "@/lib/actions";
+import type { FieldError } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import { CldUploadWidget } from "next-cloudinary";
@@ -20,30 +21,43 @@ const TeacherForm = ({
 }: {
   type: "create" | "update";
   data?: any;
-  setOpen: Dispatch<SetStateAction<boolean>>;
+  setOpen?: Dispatch<SetStateAction<boolean>>;
   relatedData?: any;
 }) => {
+  const isCreate = type === "create";
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<TeacherSchema>({
-    resolver: zodResolver(teacherSchema),
+  } = useForm<any>({
+    resolver: zodResolver(isCreate ? createTeacherSchema : updateTeacherSchema),
   });
 
   const [img, setImg] = useState<any>();
 
-  const [state, formAction] = useFormState(
-    type === "create" ? createTeacher : updateTeacher,
-    {
-      success: false,
-      error: false,
+  // Reducer for useActionState
+  const teacherReducer = async (state: { success: boolean; error: boolean }, payload: any) => {
+    try {
+      if (isCreate) {
+        await createTeacher({ ...payload, img: img?.secure_url });
+      } else {
+        await updateTeacher({ ...payload, img: img?.secure_url });
+      }
+      return { success: true, error: false };
+    } catch (e) {
+      return { success: false, error: true };
     }
-  );
+  };
+
+  const [state, formAction] = useActionState(teacherReducer, { success: false, error: false });
 
   const onSubmit = handleSubmit((data) => {
     console.log(data);
-    formAction({ ...data, img: img?.secure_url });
+    if (formAction) {
+      startTransition(() => {
+        formAction(data);
+      });
+    }
   });
 
   const router = useRouter();
@@ -51,7 +65,7 @@ const TeacherForm = ({
   useEffect(() => {
     if (state.success) {
       toast(`Teacher has been ${type === "create" ? "created" : "updated"}!`);
-      setOpen(false);
+  if (setOpen) setOpen(false);
       router.refresh();
     }
   }, [state, router, type, setOpen]);
@@ -72,14 +86,14 @@ const TeacherForm = ({
           name="username"
           defaultValue={data?.username}
           register={register}
-          error={errors?.username}
+          error={errors.username as FieldError | undefined}
         />
         <InputField
           label="Email"
           name="email"
           defaultValue={data?.email}
           register={register}
-          error={errors?.email}
+          error={errors.email as FieldError | undefined}
         />
         <InputField
           label="Password"
@@ -87,7 +101,7 @@ const TeacherForm = ({
           type="password"
           defaultValue={data?.password}
           register={register}
-          error={errors?.password}
+          error={errors.password as FieldError | undefined}
         />
       </div>
       <span className="text-xs text-gray-400 font-medium">
@@ -99,53 +113,54 @@ const TeacherForm = ({
           name="name"
           defaultValue={data?.name}
           register={register}
-          error={errors.name}
+          error={errors.name as FieldError | undefined}
         />
         <InputField
           label="Last Name"
           name="surname"
           defaultValue={data?.surname}
           register={register}
-          error={errors.surname}
+          error={errors.surname as FieldError | undefined}
         />
         <InputField
           label="Phone"
           name="phone"
           defaultValue={data?.phone}
           register={register}
-          error={errors.phone}
+          error={errors.phone as FieldError | undefined}
         />
         <InputField
           label="Address"
           name="address"
           defaultValue={data?.address}
           register={register}
-          error={errors.address}
+          error={errors.address as FieldError | undefined}
         />
         <InputField
           label="Blood Type"
           name="bloodType"
           defaultValue={data?.bloodType}
           register={register}
-          error={errors.bloodType}
+          error={errors.bloodType as FieldError | undefined}
         />
         <InputField
           label="Birthday"
           name="birthday"
           defaultValue={data?.birthday.toISOString().split("T")[0]}
           register={register}
-          error={errors.birthday}
+          error={errors.birthday as FieldError | undefined}
           type="date"
         />
         {data && (
-          <InputField
-            label="Id"
-            name="id"
-            defaultValue={data?.id}
-            register={register}
-            error={errors?.id}
-            hidden
-          />
+          <div style={{ display: "none" }}>
+            <InputField
+              label="Id"
+              name="id"
+              defaultValue={data?.id}
+              register={register}
+              error={errors.id as FieldError | undefined}
+            />
+          </div>
         )}
         <div className="flex flex-col gap-2 w-full md:w-1/4">
           <label className="text-xs text-gray-500">Sex</label>
@@ -203,11 +218,11 @@ const TeacherForm = ({
           }}
         </CldUploadWidget>
       </div>
-      {state.error && (
+      {state.error === true && (
         <span className="text-red-500">Something went wrong!</span>
       )}
       <button className="bg-blue-400 text-white p-2 rounded-md">
-        {type === "create" ? "Create" : "Update"}
+        {type === "create" ? "Create Teacher" : "Update Teacher"}
       </button>
     </form>
   );

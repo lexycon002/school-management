@@ -1,7 +1,7 @@
 // app/components/NavbarWrapper.tsx
 import { getServerSession } from "next-auth"
-import { authOptions } from "@/pages/api/auth/[...nextauth]"
 import Navbar from "./Navbar"
+import { authOptions } from "@/lib/authOptions"
 
 
 
